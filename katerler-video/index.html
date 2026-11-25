@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&display=block" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  html,body{margin:0;padding:0;background:#0b2545;overflow:hidden}
+  #root{position:relative;width:1080px;height:1920px;overflow:hidden;
+    font-family:'Montserrat',sans-serif;color:#0b2545;
+    background:linear-gradient(180deg,#bfe6ff 0%,#e8f6ff 28%,#e8f6ff 100%)}
+  .abs{position:absolute}
+  .center{left:0;right:0;text-align:center}
+  /* river */
+  #river{left:0;top:600px;width:1080px;height:520px;
+    background:linear-gradient(180deg,#4fb3ff 0%,#2b8fe0 55%,#1e6fc0 100%);
+    box-shadow:inset 0 14px 0 #8fd3ff, inset 0 -14px 0 #175aa0}
+  #waves{left:0;top:0;width:100%;height:100%;opacity:.55;
+    background-image:
+      radial-gradient(ellipse 60px 8px at 50% 50%, rgba(255,255,255,.9) 60%, transparent 62%),
+      radial-gradient(ellipse 40px 6px at 50% 50%, rgba(255,255,255,.7) 60%, transparent 62%);
+    background-size:260px 110px, 180px 90px;
+    background-position:0 20px, 90px 70px}
+  #bankTop,#bankBot{left:0;width:1080px;height:40px;background:#7cc576}
+  #bankTop{top:560px;border-radius:0 0 30px 30px}
+  #bankBot{top:1120px;border-radius:30px 30px 0 0;background:#6ab863}
+  /* label pill */
+  .pill{top:210px;left:50%;transform:translateX(-50%);padding:16px 44px;border-radius:60px;
+    font-weight:900;font-size:50px;letter-spacing:2px;color:#fff;background:#ff7a1a;
+    box-shadow:0 8px 0 #c9560a;white-space:nowrap;opacity:0}
+  .title{font-weight:900;font-size:76px;line-height:1.1;padding:0 60px;opacity:0}
+  .sub{font-weight:800;font-size:56px;line-height:1.15;padding:0 70px;opacity:0;color:#16406e}
+  .formula{font-weight:900;font-size:92px;opacity:0;white-space:nowrap}
+  .f-mid{font-weight:800;font-size:70px;opacity:0;white-space:nowrap}
+  .blue{color:#1f6fd6}.orange{color:#f06a00}.green{color:#14a44d}
+  /* boats */
+  .boatW{top:790px;width:200px;height:120px}
+  #boatL{left:90px}
+  #boatR{left:790px}
+  .tag{top:-92px;left:50%;transform:translateX(-50%);padding:8px 22px;border-radius:20px;
+    font-weight:900;font-size:42px;color:#fff;white-space:nowrap;opacity:0}
+  .tagB{background:#1f6fd6;box-shadow:0 6px 0 #144b93}
+  .tagO{background:#f06a00;box-shadow:0 6px 0 #a84a00}
+  .utag{top:150px;left:50%;transform:translateX(-50%);padding:6px 20px;border-radius:18px;
+    font-weight:900;font-size:44px;color:#fff;background:#14a44d;white-space:nowrap;opacity:0}
+  .utag.minus{background:#d63031}
+  .varrow{top:30px;width:150px;height:50px;opacity:0}
+  #boatL .varrow{left:205px}
+  #boatR .varrow{left:-155px}
+  /* distance dimension */
+  #dim{top:935px;left:290px;width:500px;height:90px;opacity:0}
+  #dim .line{position:absolute;left:0;right:0;top:66px;height:6px;background:#fff;border-radius:3px}
+  #dim .end{position:absolute;top:50px;width:6px;height:38px;background:#fff;border-radius:3px}
+  #dim .num{position:absolute;left:-200px;right:-200px;top:-14px;text-align:center;
+    font-weight:900;font-size:60px;color:#fff;text-shadow:0 4px 0 #175aa0;opacity:0}
+  /* bars */
+  .bar{top:1040px;height:28px;border-radius:14px;transform-origin:left center;opacity:0}
+  /* answer box */
+  #answerW{top:1470px;left:0;right:0;display:flex;justify-content:center}
+  #answer{position:relative;padding:26px 60px;border-radius:34px;
+    background:#14a44d;color:#fff;font-weight:900;font-size:84px;white-space:nowrap;
+    box-shadow:0 10px 0 #0c7536;opacity:0}
+  #hourBadge{top:1560px}
+  .hr{font-weight:900;font-size:64px;color:#16406e;opacity:0}
+  /* strike */
+  .sk{position:relative;display:inline-block}
+  .sk i{position:absolute;left:-6px;right:-6px;top:50%;height:10px;margin-top:-5px;
+    background:#d63031;border-radius:5px;transform:scaleX(0);transform-origin:left center}
+  #current{top:1015px;left:0;width:360px;height:90px;opacity:0}
+  #flash{top:700px;left:340px;width:300px;height:300px;border-radius:50%;
+    background:radial-gradient(circle,#fff 0%,rgba(255,240,150,.85) 35%,rgba(255,230,120,0) 70%);opacity:0}
+  /* summary card */
+  #card{top:560px;left:70px;width:940px;height:960px;border-radius:50px;background:#fff;
+    box-shadow:0 20px 60px rgba(11,37,69,.25);opacity:0}
+  #card .t1{position:absolute;top:70px;left:0;right:0;text-align:center;font-weight:900;font-size:72px;color:#ff7a1a;opacity:0}
+  #card .r{position:absolute;left:0;right:0;text-align:center;opacity:0}
+  #card .r1{top:220px}
+  #card .r2{top:470px}
+  #card .lbl{font-weight:800;font-size:50px;color:#16406e}
+  #card .big{font-weight:900;font-size:100px;margin-top:14px}
+  #card sub{font-size:.55em}
+  #subW{top:1600px;left:0;right:0;display:flex;justify-content:center}
+  #subscribe{position:relative;padding:28px 54px;border-radius:70px;
+    background:#e53935;color:#fff;font-weight:900;font-size:62px;white-space:nowrap;
+    box-shadow:0 10px 0 #a32522;opacity:0;display:flex;align-items:center;gap:22px}
+  #watch{top:1190px;left:50%;margin-left:-150px;width:300px;height:300px;opacity:0}
+  #check1{width:90px;height:90px;vertical-align:middle;display:inline-block;margin-left:16px}
+</style>
+</head>
+<body>
+<main id="root" data-composition-id="katerler" data-width="1080" data-height="1920" data-duration="79">
+
+  <!-- river scene -->
+  <div id="bankTop" class="abs"></div>
+  <div id="river" class="abs"><div id="waves" class="abs"></div></div>
+  <div id="bankBot" class="abs"></div>
+
+  <!-- distance dimension -->
+  <div id="dim" class="abs">
+    <div class="end" style="left:0"></div><div class="end" style="right:0"></div>
+    <div class="line"></div>
+    <div class="num" id="d300">300 км</div>
+    <div class="num" id="d200">200 км</div>
+    <div class="num" id="d100">100 км</div>
+  </div>
+
+  <!-- bars for check -->
+  <div id="barB" class="abs bar" style="left:290px;width:200px;background:#1f6fd6"></div>
+  <div id="barO" class="abs bar" style="left:490px;width:300px;background:#f06a00"></div>
+
+  <!-- current arrow -->
+  <svg id="current" class="abs" viewBox="0 0 360 90">
+    <path d="M10 45 H270" stroke="#14a44d" stroke-width="22" stroke-linecap="round"/>
+    <path d="M250 10 L340 45 L250 80 Z" fill="#14a44d"/>
+    <text x="130" y="38" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="900" font-size="34" fill="#fff">ағыс u</text>
+  </svg>
+
+  <div id="flash" class="abs"></div>
+
+  <!-- left boat (blue, faces right) -->
+  <div id="boatL" class="abs boatW">
+    <div class="abs tag tagB" id="tagL">40 км/сағ</div>
+    <svg class="abs" style="left:0;top:0" width="200" height="120" viewBox="0 0 200 120">
+      <rect x="62" y="22" width="70" height="42" rx="8" fill="#fff" stroke="#144b93" stroke-width="5"/>
+      <rect x="74" y="32" width="20" height="16" rx="3" fill="#8fd3ff"/>
+      <rect x="102" y="32" width="20" height="16" rx="3" fill="#8fd3ff"/>
+      <path d="M8 62 H200 L168 108 H30 Z" fill="#1f6fd6" stroke="#144b93" stroke-width="5" stroke-linejoin="round"/>
+      <path d="M22 78 H186" stroke="#fff" stroke-width="5"/>
+      <path d="M78 22 V2" stroke="#144b93" stroke-width="5"/>
+      <path d="M78 2 L104 9 L78 16 Z" fill="#ffd23f"/>
+    </svg>
+    <svg class="abs varrow" viewBox="0 0 150 50">
+      <path d="M5 25 H110" stroke="#1f6fd6" stroke-width="14" stroke-linecap="round"/>
+      <path d="M100 4 L146 25 L100 46 Z" fill="#1f6fd6"/>
+    </svg>
+    <div class="abs utag" id="uL">+u</div>
+  </div>
+
+  <!-- right boat (orange, faces left) -->
+  <div id="boatR" class="abs boatW">
+    <div class="abs tag tagO" id="tagR">60 км/сағ</div>
+    <svg class="abs" style="left:0;top:0" width="200" height="120" viewBox="0 0 200 120">
+      <g transform="translate(200,0) scale(-1,1)">
+        <rect x="62" y="22" width="70" height="42" rx="8" fill="#fff" stroke="#a84a00" stroke-width="5"/>
+        <rect x="74" y="32" width="20" height="16" rx="3" fill="#8fd3ff"/>
+        <rect x="102" y="32" width="20" height="16" rx="3" fill="#8fd3ff"/>
+        <path d="M8 62 H200 L168 108 H30 Z" fill="#f06a00" stroke="#a84a00" stroke-width="5" stroke-linejoin="round"/>
+        <path d="M22 78 H186" stroke="#fff" stroke-width="5"/>
+        <path d="M78 22 V2" stroke="#a84a00" stroke-width="5"/>
+        <path d="M78 2 L104 9 L78 16 Z" fill="#ffd23f"/>
+      </g>
+    </svg>
+    <svg class="abs varrow" viewBox="0 0 150 50">
+      <path d="M145 25 H40" stroke="#f06a00" stroke-width="14" stroke-linecap="round"/>
+      <path d="M50 4 L4 25 L50 46 Z" fill="#f06a00"/>
+    </svg>
+    <div class="abs utag minus" id="uR">−u</div>
+  </div>
+
+  <!-- section pills -->
+  <div class="abs pill" id="p2">ЕСЕП</div>
+  <div class="abs pill" id="p3">1-ҚАДАМ</div>
+  <div class="abs pill" id="p4">2-ҚАДАМ</div>
+  <div class="abs pill" id="p5">ТЕКСЕРУ</div>
+  <div class="abs pill" id="p6" style="background:#14a44d;box-shadow:0 8px 0 #0c7536">ҚҰПИЯ!</div>
+
+  <!-- scene 1 -->
+  <div class="abs center title" id="h1" style="top:250px">Өзен ағысы<br>есептері?</div>
+  <div class="abs center sub" id="h2" style="top:1210px;font-size:64px">1 минутта<br>түсіндіремін!</div>
+  <svg id="watch" class="abs" viewBox="0 0 300 300" style="top:1420px">
+    <rect x="128" y="6" width="44" height="26" rx="6" fill="#ff7a1a"/>
+    <circle cx="150" cy="165" r="120" fill="#fff" stroke="#ff7a1a" stroke-width="18"/>
+    <g id="hand"><path d="M150 165 V75" stroke="#0b2545" stroke-width="12" stroke-linecap="round"/></g>
+    <circle cx="150" cy="165" r="12" fill="#0b2545"/>
+  </svg>
+
+  <!-- scene 2 -->
+  <div class="abs center sub" id="q2" style="top:330px">Екі катер бір-біріне<br>қарсы келе жатыр</div>
+  <div class="abs center formula" id="tq" style="top:1220px">t = ?</div>
+  <div class="abs center sub" id="q3" style="top:1380px">Неше сағаттан кейін<br>кездеседі?</div>
+
+  <!-- scene 3 -->
+  <div class="abs center sub" id="c3" style="top:350px">Жақындасу<br>жылдамдығы</div>
+  <div class="abs center formula" id="f3" style="top:1220px">v = <span class="blue">40</span> + <span class="orange">60</span> <span id="f3b" style="opacity:0">= 100</span></div>
+  <div class="abs center f-mid" id="f3u" style="top:1340px">км/сағ</div>
+  <div class="abs center f-mid" id="call3" style="top:1440px;color:#d63031">−100 км әр сағат</div>
+  <div class="abs center" id="hourBadge">
+    <div class="abs center hr" id="hr1">1 сағат</div>
+    <div class="abs center hr" id="hr2">2 сағат</div>
+  </div>
+
+  <!-- scene 4 -->
+  <div class="abs center sub" id="c4" style="top:350px">Уақытты табамыз</div>
+  <div class="abs center formula" id="f4a" style="top:1200px">t = S : v</div>
+  <div class="abs center formula" id="f4b" style="top:1330px">300 : 100 <span id="f4c" style="opacity:0">= 3 сағ</span></div>
+  <div class="abs" id="answerW"><div id="answer">Жауабы: 3 сағат</div></div>
+
+  <!-- scene 5 -->
+  <div class="abs center sub" id="c5" style="top:350px">Жауапты тексереміз</div>
+  <div class="abs center formula blue" id="f5a" style="top:1190px;font-size:84px">40 · 3 = 120 км</div>
+  <div class="abs center formula orange" id="f5b" style="top:1310px;font-size:84px">60 · 3 = 180 км</div>
+  <div class="abs center formula green" id="f5c" style="top:1450px;font-size:84px">120 + 180 = 300 км<svg id="check1" viewBox="0 0 90 90"><circle cx="45" cy="45" r="42" fill="#14a44d"/><path d="M24 47 L39 62 L67 30" stroke="#fff" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+
+  <!-- scene 6 -->
+  <div class="abs center sub" id="c6" style="top:350px">Өзен ағысы әсер<br>ете ме?</div>
+  <div class="abs center formula" id="f6" style="top:1250px;font-size:78px">(<span class="blue">40</span> <span class="sk">+ u<i id="sk1"></i></span>) + (<span class="orange">60</span> <span class="sk">− u<i id="sk2"></i></span>) = 100</div>
+  <div class="abs center sub" id="c6b" style="top:1420px;color:#14a44d">Ағыс жауапқа<br>әсер етпейді!</div>
+
+  <!-- scene 7 -->
+  <div id="card" class="abs">
+    <div class="t1" id="k1">Есіңде сақта:</div>
+    <div class="r r1" id="k2"><div class="lbl">Қарсы қозғалыс:</div><div class="big">v = v<sub>1</sub> + v<sub>2</sub></div></div>
+    <div class="r r2" id="k3"><div class="lbl">Кездесу уақыты:</div><div class="big">t = S : v</div></div>
+  </div>
+  <div id="subW" class="abs"><div id="subscribe">
+    <svg width="64" height="64" viewBox="0 0 64 64"><path d="M32 6 C20 6 14 16 14 28 V40 L8 48 H56 L50 40 V28 C50 16 44 6 32 6 Z" fill="#fff"/><circle cx="32" cy="54" r="7" fill="#fff"/></svg>
+    Жазылуды ұмытпа!
+  </div></div>
+
+  <audio id="narration" src="https://cdn.creativeclaw.co/u/4117dd21/audio/70dfdf6e-6152-4562-b4d2-a4bbbe4f19e6.mp3" data-start="0" data-duration="77.6" data-volume="1"></audio>
+</main>
+
+<script>
+(function(){
+  const tl = gsap.timeline({paused:true});
+  const IN = (sel,t,opts={}) => tl.fromTo(sel,{opacity:0,scale:opts.s0??0.6,y:opts.y0??0},
+      {opacity:1,scale:1,y:0,duration:opts.d??0.45,ease:opts.ease??'back.out(2)'},t);
+  const OUT = (sel,t,d=0.3) => tl.to(sel,{opacity:0,duration:d,ease:'power1.in'},t);
+  const PILL = (sel,t,tOut) => {
+    tl.fromTo(sel,{opacity:0,xPercent:-50,x:0,y:-40},{opacity:1,y:0,duration:.4,ease:'back.out(2)'},t);
+    if(tOut) tl.to(sel,{opacity:0,y:-30,duration:.3},tOut);
+  };
+  // pills keep translateX(-50%): use xPercent and clear CSS transform
+  gsap.set('.pill',{transform:'none',xPercent:-50,left:'50%'});
+    gsap.set('.tag,.utag',{transform:'none',xPercent:-50,left:'50%'});
+
+  // river waves flow for whole video (finite, linear)
+  tl.fromTo('#waves',{backgroundPosition:'0px 20px, 90px 70px'},
+    {backgroundPosition:'-5200px 20px, -3510px 70px',duration:79,ease:'none'},0);
+
+  // boats offscreen initially
+  tl.set('#boatL',{x:-420},0);
+  tl.set('#boatR',{x:420},0);
+
+  // ---- Scene 1 (0–6) ----
+  IN('#h1',0.25,{y0:40});
+  IN('#h2',3.4,{y0:40});
+  IN('#watch',3.6,{s0:0.3});
+  tl.fromTo('#hand',{rotation:0,svgOrigin:'150 165'},{rotation:360,svgOrigin:'150 165',duration:2.2,ease:'none'},3.6);
+  OUT('#h1,#h2,#watch',5.75);
+
+  // ---- Scene 2 (6–20.4) ----
+  PILL('#p2',6.1,20.2);
+  IN('#q2',6.4,{y0:30});
+  tl.to('#boatL',{x:0,duration:1.1,ease:'power2.out'},7.0);
+  tl.to('#boatR',{x:0,duration:1.1,ease:'power2.out'},7.0);
+  IN('#tagL',11.4); IN('#tagR',14.0);
+  tl.fromTo('#dim',{opacity:0,scaleX:0},{opacity:1,scaleX:1,duration:.6,ease:'power2.out'},16.3);
+  IN('#d300',16.5,{s0:.5});
+  OUT('#q2',17.5);
+  IN('#tq',17.7); IN('#q3',18.1,{y0:30});
+  OUT('#tq,#q3',20.2);
+
+  // ---- Scene 3 (20.4–34.9) ----
+  PILL('#p3',20.4,34.7);
+  tl.fromTo('.varrow',{opacity:0,scaleX:0,transformOrigin:'50% 50%'},{opacity:1,scaleX:1,duration:.5,ease:'back.out(2)'},22.0);
+  tl.to('.varrow',{scale:1.25,duration:.25,yoyo:true,repeat:3,ease:'sine.inOut'},23.6);
+  IN('#c3',25.7,{y0:30});
+  IN('#f3',27.5);
+  tl.fromTo('#f3b',{opacity:0},{opacity:1,duration:.3},28.8);
+  IN('#f3u',28.9,{y0:20});
+  tl.to('.varrow',{opacity:0,duration:.3},30.4);
+  IN('#call3',30.8,{y0:20});
+  // hour steps: h=1 at 31.3, h=2 at 33.0 ; left nose 290+66.67h, right nose 790-100h
+  const step = (t,h,from) => {
+    tl.to('#boatL',{x:66.667*h,duration:.8,ease:'power2.inOut'},t);
+    tl.to('#boatR',{x:-100*h,duration:.8,ease:'power2.inOut'},t);
+    tl.to('#dim',{left:290+66.667*h,width:500-166.667*h,duration:.8,ease:'power2.inOut'},t);
+  };
+  step(31.3,1); tl.to('#d300',{opacity:0,duration:.2},31.4); tl.fromTo('#d200',{opacity:0},{opacity:1,duration:.3},31.8);
+  IN('#hr1',31.4,{s0:.5});
+  step(33.0,2); tl.to('#d200',{opacity:0,duration:.2},33.1); tl.fromTo('#d100',{opacity:0},{opacity:1,duration:.3},33.5);
+  OUT('#hr1',33.0,.2); IN('#hr2',33.1,{s0:.5});
+  OUT('#c3,#f3,#f3u,#call3,#hr2',34.6);
+
+  // ---- Scene 4 (34.9–44.6) ----
+  PILL('#p4',35.0,44.4);
+  IN('#c4',35.3,{y0:30});
+  IN('#f4a',36.1);
+  IN('#f4b',39.5);
+  tl.fromTo('#f4c',{opacity:0},{opacity:1,duration:.3},41.1);
+  // final step: meet at x=490
+  step(41.9,3);
+  tl.to('#dim',{opacity:0,duration:.3},42.4);
+  tl.fromTo('#flash',{opacity:0,scale:.3},{opacity:1,scale:1.4,duration:.35,ease:'power2.out'},42.6);
+  tl.to('#flash',{opacity:0,scale:1.8,duration:.6},42.95);
+  tl.to('#tagL,#tagR',{opacity:0,duration:.3},42.6);
+  IN('#answer',42.7);
+  OUT('#c4,#f4a,#f4b,#answer',44.4);
+
+  // ---- Scene 5 (44.7–55.1) ----
+  PILL('#p5',44.7,54.9);
+  IN('#c5',45.0,{y0:30});
+  tl.fromTo('#barB',{opacity:1,scaleX:0},{scaleX:1,duration:.7,ease:'power2.out'},47.3);
+  IN('#f5a',47.3,{y0:20});
+  tl.fromTo('#barO',{opacity:1,scaleX:0,transformOrigin:'right center'},{scaleX:1,duration:.7,ease:'power2.out'},49.6);
+  IN('#f5b',49.6,{y0:20});
+  tl.fromTo('#f5c',{opacity:0,y:20},{opacity:1,y:0,duration:.4},51.6);
+  tl.fromTo('#check1',{scale:0,transformOrigin:'50% 50%'},{scale:1,duration:.5,ease:'back.out(3)'},54.0);
+  OUT('#c5,#f5a,#f5b,#f5c,#barB,#barO',54.9);
+
+  // ---- Scene 6 (55.1–68.5) ----
+  PILL('#p6',55.1,68.3);
+  IN('#c6',55.4,{y0:30});
+  // reset boats to start
+  tl.to('#boatL,#boatR',{x:0,duration:.8,ease:'power2.inOut'},55.3);
+  tl.fromTo('#current',{opacity:1,x:-380},{x:360,duration:2.0,ease:'power2.out'},56.5);
+  IN('#uL',59.6); IN('#uR',61.0);
+  IN('#f6',62.0,{s0:.8});
+  tl.to('#sk1',{scaleX:1,duration:.35,ease:'power2.out'},64.4);
+  tl.to('#sk2',{scaleX:1,duration:.35,ease:'power2.out'},64.8);
+  tl.to('#uL,#uR',{opacity:.25,duration:.4},64.6);
+  IN('#c6b',65.3,{y0:30});
+  OUT('#c6,#f6,#c6b,#current,#uL,#uR',68.2);
+
+  // ---- Scene 7 (68.5–79) ----
+  tl.to('#boatL,#boatR',{opacity:0,duration:.4},68.3);
+  tl.fromTo('#card',{opacity:0,y:60},{opacity:1,y:0,duration:.5,ease:'power2.out'},68.5);
+  IN('#k1',68.7,{y0:20});
+  IN('#k2',69.7,{y0:30});
+  IN('#k3',72.6,{y0:30});
+  IN('#subscribe',75.7,{s0:.3});
+  tl.to('#subscribe',{scale:1.08,duration:.4,yoyo:true,repeat:3,ease:'sine.inOut'},76.4);
+  tl.set({}, {}, 79);
+
+  window.__timelines = window.__timelines || {};
+  window.__timelines.katerler = tl;
+})();
+</script>
+</body>
+</html>
